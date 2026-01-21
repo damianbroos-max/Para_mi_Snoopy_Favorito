@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Snoopy Favorito ❤️</title>
+    <style>
+        /* --- ESTILOS CSS --- */
+        :root {
+            --rosa-suave: #ffb7c5;
+            --rojo-romantico: #e63946;
+            --blanco-puro: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--rosa-suave);
+            overflow: hidden; /* Evita scroll por los corazones flotantes */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            cursor: pointer; /* Indica que se puede hacer clic */
+            user-select: none;
+        }
+
+        /* Contenedor de corazones animados */
+        #heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* No interfiere con el clic del usuario */
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: var(--rojo-romantico);
+            opacity: 0.6;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Tarjeta de Contenido */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        /* Animación de entrada para mensajes */
+        .fade-in {
+            animation: fadeInZoom 0.8s ease-out;
+        }
+
+        @keyframes fadeInZoom {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .snoopy-img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+        }
+
+        .love-message {
+            font-size: 1.4rem;
+            color: var(--rojo-romantico);
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .instruction {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="heart-container"></div>
+
+    <div class="card" id="main-card">
+        <img id="snoopy-display" src="" alt="Snoopy Love" class="snoopy-img">
+        <p id="message-display" class="love-message"></p>
+        <p class="instruction">(Toca la pantalla para ver más)</p>
+    </div>
+
+    <script>
+        /* --- LÓGICA JAVASCRIPT --- */
+
+        // 1. Datos de los mensajes e imágenes
+        const content = [
+            {
+                msg: "¡Eres la persona más especial del mundo!",
+                img: "https://i.pinimg.com/originals/82/33/83/8233833777085750d4d98a0026e6d116.png"
+            },
+            {
+                msg: "Cada momento a tu lado es un regalo.",
+                img: "https://i.pinimg.com/originals/30/08/4b/30084b6f1362e584f27f7f897610023b.png"
+            },
+            {
+                msg: "Mi felicidad tiene tu nombre.",
+                img: "https://i.pinimg.com/originals/f3/04/18/f304184666f77f59781878f14144360e.png"
+            },
+            {
+                msg: "Te quiero hoy, mañana y siempre.",
+                img: "https://i.pinimg.com/originals/0d/16/a6/0d16a67f654b4233816a70e28f300c00.png"
+            },
+            {
+                msg: "Gracias por existir y por estar en mi vida.",
+                img: "https://i.pinimg.com/originals/f6/65/c9/f665c977264879dfd9620775d796796c.png"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        // 2. Elementos del DOM
+        const card = document.getElementById('main-card');
+        const imgElement = document.getElementById('snoopy-display');
+        const msgElement = document.getElementById('message-display');
+        const heartContainer = document.getElementById('heart-container');
+
+        // 3. Función para cambiar el contenido
+        function updateContent() {
+            // Reiniciar animación quitando y poniendo la clase
+            card.classList.remove('fade-in');
+            void card.offsetWidth; // Truco para reiniciar animación CSS
+            card.classList.add('fade-in');
+
+            // Actualizar datos
+            imgElement.src = content[currentIndex].img;
+            msgElement.innerText = content[currentIndex].msg;
+
+            // Avanzar índice
+            currentIndex = (currentIndex + 1) % content.length;
+        }
+
+        // 4. Sistema de corazones flotantes
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            
+            heartContainer.appendChild(heart);
+
+            // Eliminar corazón después de la animación para no saturar la memoria
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        // 5. Inicialización
+        setInterval(createHeart, 300); // Crea un corazón cada 300ms
+        
+        // Escuchar clics en cualquier parte de la pantalla
+        document.body.addEventListener('click', updateContent);
+
+        // Mostrar el primer mensaje al cargar
+        updateContent();
+
+    </script>
+</body>
+</html>
